@@ -1,0 +1,50 @@
+---
+version: '3.7'
+services:
+  caddy:
+    container_name: caddy
+    build:
+      context: .
+      dockerfile: Dockerfile_caddy
+    restart: unless-stopped
+    networks:
+      - caddy
+    ports:
+      - '80:80'
+      - '443:443'
+      - '2019:2019'
+    volumes:
+      - caddy-config:/config
+      - caddy-data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+
+  smokeping:
+    image: lscr.io/linuxserver/smokeping
+    container_name: smokeping
+    restart: unless-stopped
+    environment:
+      # port 80
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - smokeping-config:/config
+      - smokeping-data:/data
+    networks:
+      - caddy
+    depends_on:
+      - caddy
+
+networks:
+  caddy:
+    name: caddy
+
+volumes:
+  caddy-config:
+    name: caddy-config
+  caddy-data:
+    name: caddy-data
+  smokeping-config:
+    name: smokeping-config
+  smokeping-data:
+    name: smokeping-config

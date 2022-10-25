@@ -1,0 +1,30 @@
+// Example of proxying to another container in the Docker network
+https://smokeping.my.domain { 
+	reverse_proxy http://smokeping:80
+
+	tls {
+			dns cloudflare my-api-token
+	}
+}
+
+// Example of doing it to an HTTP server on another machine
+https://host.my.domain { 
+	reverse_proxy http://host.lan:80
+
+	tls {
+			dns cloudflare my-api-token
+	}
+}
+
+// Example of doing it to an HTTPS server with self-signed cert
+https://self-signed.my.domain {
+	reverse_proxy https://self-signed.lan:443 {
+			transport http {
+					tls tls_insecure_skip_verify
+			}
+	}
+
+	tls {
+			dns cloudflare my-api-token
+	}
+}
